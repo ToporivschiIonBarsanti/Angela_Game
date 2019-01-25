@@ -16,53 +16,64 @@ randomSeed(analogRead(0));
 
 void loop() {
   // put your main code here, to run repeatedly:
+appoggio = 0;
 while(puntiAppoggio == 0)
 {
+  ControllaInt();
+  appoggio = puntiMeta;
   ControllaPuntiMeta();
 }
 controllo = 0;
 programma = 0;
 avversario = 0;
-CCV("Programma 101");
+CCV("Macchina");
 if(avversario == 0){
-  
+  while(controllo == 0){
+  ControllaInt();
+  avversario = appoggio;
+  Controllo();
+  }
+}
+if(avversario != 0){
+  AggiungiPunti(avversario);
+}
+CCV("Giocatore");
+if(programma == 0){
+  MacchinaSceglie();
+  }
+if(programma != 0){
+  AggiungiPunti(programma);
 }
 
 
-  
 
 }
 
-void Controllo(int numero){
-  if(avversario == 1 && numero != 6 && numero != 1){
+
+
+void Controllo(){
+  if(avversario == 1 && programma != 6 && programma != 1){
     controllo = 1;
   }
-  if(avversario == 2 && numero != 5 && numero != 2){
+  if(avversario == 2 && programma != 5 && programma != 2){
     controllo = 1;
   }
-  if(avversario == 3 && numero != 4 && numero != 3){
+  if(avversario == 3 && programma != 4 && programma != 3){
     controllo = 1;
   } 
 }
 void MacchinaSceglie(){
-  while(){
-  randNumber = random(1,7);
-  Controllo(randNumber);
-  if(controllo == 1){ programma = randNumber; }
-   }
+  while(controllo == 0){
+  programma = random(1,7);
+  Controllo();
 }
 
 void AggiungiPunti(int punti){
   puntiTotali = puntiTotali + punti;
 }
 void ControllaPuntiMeta(){
-
 if(puntiMeta >= 30 && puntiMeta <= 100){
   puntiAppoggio = 1;
-}
-else
-{
-
 }
 }
 
