@@ -22,24 +22,46 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  appoggio = 0;
+
+
+  
+
   if (puntiTotali != 0) {
     Serial.print("Punti totali ");
     Serial.println(puntiTotali);
   }
+  if(puntiAppoggio == 0 && appoggio != 3){
+    Serial.println("Inserisci punti metà");
+  }
+  if(appoggio == 3){
+    Serial.println("Inserisci punti metà per giocare di nuovo");
+  }
   while (puntiAppoggio == 0)
   {
     ControllaMeta();
-    if (puntiAppoggio == 0) {
-      //delay(1000);
-    }
+    
+  }
+  if (appoggio == 3) {
+    appoggio = 0;
   }
   controllo = 0;
   programma = 0;
   avversario = 0;
-  
-  CCV("Macchina");
-  if (avversario == 0) {
+
+  CCV();
+  if (appoggio != 0 && appoggio != 3) {
+    if (appoggio == 1) {
+      Serial.println("Macchina ha vinto");
+    }
+    else if (appoggio == 2) {
+      Serial.println("Macchina ha perso");
+    }
+    puntiMeta = 0;
+    puntiTotali = 0;
+    puntiAppoggio = 0;
+    appoggio = 3;
+  }
+  if (avversario == 0 && appoggio != 3) {
     while (controllo == 0) {
       ControllaNumeroGiocatore();
       Controllo();
@@ -50,13 +72,25 @@ void loop() {
   if (avversario != 0) {
     AggiungiPunti(avversario);
   }
-  CCV("Giocatore");
+  CCV();
+  if (appoggio != 0 && appoggio != 3) {
+    if (appoggio == 1) {
+      Serial.println("Giocatore ha vinto");
+    }
+    else if (appoggio == 2) {
+      Serial.println("Giocatre ha perso");
+    }
+    puntiMeta = 0;
+    puntiTotali = 0;
+    puntiAppoggio = 0;
+    appoggio = 3;
+  }
   controllo = 0;
-  if (programma == 0) {
+  if (programma == 0 && appoggio != 3) {
     MacchinaSceglie();
     Serial.print("Macchina ");
     Serial.println(programma);
-    
+
   }
   if (programma != 0) {
     AggiungiPunti(programma);
@@ -93,45 +127,46 @@ void MacchinaSceglie() {
   }
 }
 
-  void AggiungiPunti(int punti) {
-    puntiTotali = puntiTotali + punti;
+void AggiungiPunti(int punti) {
+  puntiTotali = puntiTotali + punti;
+}
+
+void CCV() { //ControlloCondizioniVincita
+  if (puntiTotali == puntiMeta) {
+    appoggio = 1;
   }
+  if (puntiTotali > puntiMeta) {
+    appoggio = 2;
+  }
+}
 
-  void CCV(String nome) { //ControlloCondizioniVincita
-    if (puntiTotali == puntiMeta) {
-      Serial.println(nome + " ha vinto");
+void ControllaMeta() {
+  while (Serial.available() > 0) {
+    String meta = Serial.readString();
+
+    if (meta.toInt() >= 30 && meta.toInt() <= 100) {
+      puntiMeta = meta.toInt();
+      puntiAppoggio = 1;
+      Serial.print("Punti metà ");
+      Serial.println(puntiMeta);
     }
-    if (puntiTotali > puntiMeta) {
-      Serial.println(nome + " ha perso");
+    else {
+      Serial.println("Hai sbagliato inserimento dei punti di metà");
+    }
+
+  }
+}
+
+void ControllaNumeroGiocatore() {
+  while (Serial.available() > 0) {
+    String numero = Serial.readString();
+
+    if (numero.toInt() >= 1 && numero.toInt() <= 6) {
+      avversario = numero.toInt();
+    }
+    else {
+      Serial.println("Hai sbagliato inserimento del numero");
     }
   }
-
-  void ControllaMeta() {
-    while (Serial.available() > 0) {
-      String meta = Serial.readString();
-
-      if (meta.toInt() >= 30 && meta.toInt() <= 100) {
-        puntiMeta = meta.toInt();
-        puntiAppoggio = 1;
-        Serial.println(puntiMeta);
-      }
-      else {
-        Serial.println("Hai sbagliato inserimento dei punti di metà");
-      }
-
-    }
-  }
-
-  void ControllaNumeroGiocatore() {
-    while (Serial.available() > 0) {
-      String numero = Serial.readString();
-
-      if (numero.toInt() >= 1 && numero.toInt() <= 6) {
-        avversario = numero.toInt();
-      }
-      else {
-        Serial.println("Hai sbagliato inserimento del numero");
-      }
-    }
-  }
+}
 
