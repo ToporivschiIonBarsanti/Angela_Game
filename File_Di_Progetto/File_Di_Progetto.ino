@@ -1,15 +1,23 @@
+int puntiTotali;
+const int puntiMinimo = 30;
+const int puntiMassimo = 100;
+int puntiAppoggio;
+int appoggio;
+int puntiMeta;
+int avversario;
+int programma;
+int controllo;
+
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
-int puntiTotali = 0;
-int puntiMinimo = 30;
-int puntiMassimo = 100;
-int puntiAppoggio = 0;
-int appoggio = 0;
-int puntiMeta = 0;
-int avversario = 0;
-int programma = 0;
-int controllo = 0;
+puntiTotali = 0;
+puntiAppoggio = 0;
+appoggio = 0;
+puntiMeta = 0;
+avversario = 0;
+programma = 0;
+controllo = 0;
 randomSeed(analogRead(0));
 
 }
