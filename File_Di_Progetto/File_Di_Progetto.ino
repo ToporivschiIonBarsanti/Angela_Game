@@ -75,6 +75,15 @@ void Controllo() {
   if (avversario == 3 && programma != 4 && programma != 3) {
     controllo = 1;
   }
+  if (avversario == 4 && programma != 4 && programma != 3) {
+    controllo = 1;
+  }
+  if (avversario == 5 && programma != 5 && programma != 2) {
+    controllo = 1;
+  }
+  if (avversario == 6 && programma != 6 && programma != 1) {
+    controllo = 1;
+  }
 }
 
 void MacchinaSceglie() {
