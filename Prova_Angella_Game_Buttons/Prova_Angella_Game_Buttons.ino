@@ -16,6 +16,7 @@ int b6;
 
 void setup() {
   // put your setup code here, to run once:
+Serial.begin(9600);
 b1 = 1;
 b2 = 2;
 b3 = 3;
@@ -26,6 +27,7 @@ puntiAppoggio = 0;
 turno = 0;
 vincita = 0;
 appoggio = 0;
+randomSeed(analogRead(0));
 }
 
 void loop() {
@@ -37,26 +39,38 @@ if(puntiAppoggio == 0)
   Serial.println("Inserisci punti metà");
 }
 while(puntiAppogio == 0){
-  ControllaMeta();
+  InserisciaMeta();
 }
 //end region puntiMeta
 //codice del gioco
-
+CCV();
+Vincita("Macchina");
 if(turno == 0){
   Serial.println("è il turno di giocatore");
-}
-CCV();
-Vincita("giocatore");
-while(controllo == 0){
+  while(controllo == 0){
   
+  }
+}
+
+CCV();
+Vincita("Giocatore");
+
+if(turno == 2){
+  Serial.println("è il turno di macchina");
+  while(controllo == 0){
+    MacchinaSceglie();
+    Controllo();
+  }
+  AggiungiPunti(macchina);
+  appoggio = macchina;
+}
+if(turno == 2){ giocatore = 0; macchina = 0; turno = 0; }
+// end region gioco
 }
 
 
-}
 
-
-
-void Controllo(){
+void Controllo(){ // mi esegue il controllo rispetto le regole del gioco
   if(giocatore == 1 && macchina != 6 && macchina != 1 && appoggio != 6 && appoggio != 1){
     controllo = 1;
   }
@@ -76,14 +90,14 @@ void Controllo(){
     controllo = 1;
   }
 }
-void MacchinaSceglie(){
+void MacchinaSceglie(){ // macchina che fa un numero random col rispetto alle regole del gioco
   while(controllo == 0){
     macchina = random(1,7);
     Controllo();
   }
 }
 void AggiungiPunti(int punti){ puntiTotali = puntiTotali + punti; }
-void ControllaMeta() // serve per inserire numero di punti metà
+void InserisciMeta() // serve per inserire numero di punti metà
 { 
   while (Serial.available() > 0) {
     String meta = Serial.readString();
