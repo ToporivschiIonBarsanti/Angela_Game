@@ -1,3 +1,6 @@
+#include <LiquidCrystal.h>
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int puntiTotali;
 int puntiMeta;
 int giocatore;
@@ -10,33 +13,31 @@ int vincita;
 int b1;
 int b2;
 int b3;
-int b4;
-int b5; 
-int b6;
+// Keep in mind the pull-up means the pushbutton's logic is inverted. It goes
+// HIGH when it's open, and LOW when it's pressed.
 
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
-b1 = 1;
-b2 = 2;
-b3 = 3;
-b4 = 4;
-b5 = 5; 
-b6 = 6;
+lcd.begin(16,2);
+pinMode(10, INPUT_PULLUP);
+pinMode(9, INPUT_PULLUP);
+pinMode(8, INPUT_PULLUP);
 puntiAppoggio = 0;
 turno = 0;
 vincita = 0;
 appoggio = 0;
+b1 = 10; b2 = 9; b3 = 8;
 randomSeed(analogRead(0));
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  lcd.setCursor(0,1);
 //controllo se puntiMeta non erano ancora inseriti e, in questo caso, gli inserisco
 if(puntiAppoggio == 0)
 {
-  Serial.println("Inserisci punti metà");
+  lcd.print("Inserisci punti metà");
 }
 while(puntiAppogio == 0){
   InserisciaMeta();
@@ -46,7 +47,7 @@ while(puntiAppogio == 0){
 CCV();
 Vincita("Macchina");
 if(turno == 0){
-  Serial.println("è il turno di giocatore");
+  lcd.print("è il turno di giocatore");
   while(controllo == 0){
   
   }
@@ -56,7 +57,7 @@ CCV();
 Vincita("Giocatore");
 
 if(turno == 2){
-  Serial.println("è il turno di macchina");
+  lcd.print("è il turno di macchina");
   while(controllo == 0){
     MacchinaSceglie();
     Controllo();
@@ -97,22 +98,9 @@ void MacchinaSceglie(){ // macchina che fa un numero random col rispetto alle re
   }
 }
 void AggiungiPunti(int punti){ puntiTotali = puntiTotali + punti; }
-void InserisciMeta() // serve per inserire numero di punti metà
+void InserisciMeta() // serve per inserire numero di punti metà //da cambiare
 { 
-  while (Serial.available() > 0) {
-    String meta = Serial.readString();
-
-    if (meta.toInt() >= 30 && meta.toInt() <= 100) {
-      puntiMeta = meta.toInt();
-      puntiAppoggio = 1;
-      Serial.print("Punti metà ");
-      Serial.println(puntiMeta);
-    }
-    else {
-      Serial.println("Hai sbagliato inserimento dei punti di metà");
-    }
-
-  }
+  
 }
 void CCV() // controllo condizioni vincita
 {
@@ -125,10 +113,10 @@ void CCV() // controllo condizioni vincita
 }
 void Vincita(String nome){
   if(vincita == 1){
-  Serial.println(nome + " ha vinto");
+  lcd.print(nome + " ha vinto");
 }
 else if (vincita == 2) {
-  Serial.println(nome + " ha perso");
+  lcd.print(nome + " ha perso");
 }
 }
 
