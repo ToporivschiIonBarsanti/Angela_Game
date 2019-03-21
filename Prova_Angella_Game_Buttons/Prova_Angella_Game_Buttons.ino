@@ -5,11 +5,10 @@ int puntiTotali;
 int puntiMeta;
 int giocatore;
 int macchina;
-int turno;
 int controllo;
 int puntiAppoggio; // serve solo per controllare i punti metà
-int appoggio; // serve per controllare numero dell'ultimo turno
-int vincita;
+int appoggio; //serve per controllare la situazione del gioco, se c'e' un vincitore/perditore
+int ultimoValore; // serve per controllare numero dell'ultimo turno
 int b1;
 int b2;
 int b3;
@@ -23,59 +22,77 @@ lcd.begin(16,2);
 pinMode(10, INPUT_PULLUP);
 pinMode(9, INPUT_PULLUP);
 pinMode(8, INPUT_PULLUP);
+puntiAppoggio = 0;
 puntiMeta = 0;
-turno = 0;
-vincita = 0;
 appoggio = 0;
+vincita = 0
+ultimoValore = 0;
 b1 = 10; b2 = 9; b3 = 8;
 randomSeed(analogRead(0));
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+ // put your main code here, to run repeatedly:
   lcd.setCursor(0,1);
+
+  if(puntiTotali != 0){
+    lcd.print("Punti totali " + puntiTotali);
+  }
 //controllo se puntiMeta non erano ancora inseriti e, in questo caso, gli inserisco
-if(puntiMeta == 0)
-{
-  lcd.print("Inserisci punti metà");
-}
-while(puntiMeta == 0){
+ if(puntiAppoggio == 0 && appoggio != 3)
+ {
+   lcd.print("Inserisci punti metà");
+ }
+ while(puntiAppoggio == 0){
   InserisciaMeta();
-}
+ }
 //end region puntiMeta
+
 //codice del gioco
+giocatore = 0; macchina = 0; controllo = 0;
+
 CCV();
 Vincita("Macchina");
-if(turno == 0){
-  lcd.print("è il turno di giocatore");
-  while(controllo == 0){
-    TurnoGiocatore();
-    Controllo();
-  }
-  AggiungiPunti(giocatore);
-  appoggio = giocatore;
+if(appoggio == 3){
+lcd.print("Clicca conferma per giocare di nuovo);
+while(digitalRead(8) == HIGH){
+appoggio = 0;
+}
 }
 
+
+TurnoGiocatore(); 
+AggiungiPunti(giocatore);
+ultimoValore = giocatore;
 controllo = 0; //serve per il turno di macchina
+
+
 CCV();
 Vincita("Giocatore");
-
-if(turno == 2){
-  lcd.print("è il turno di macchina");
-  while(controllo == 0){
-    MacchinaSceglie();
-    Controllo();
-  }
-  AggiungiPunti(macchina);
-  appoggio = macchina;
+if(appoggio == 3){
+lcd.print("Clicca conferma per giocare di nuovo);
+while(digitalRead(8) == HIGH){
+appoggio = 0;
 }
-if(turno == 2){ giocatore = 0; macchina = 0; turno = 0; }
+}
+
+TurnoMacchina();
+AggiungiPunti(macchina);
+ultimoValore = macchina;
+controllo = 0;
+
 // end region gioco
+
+
+
+
 }
 
-void TurnoGiocatore(){ //controllo se il valore (punti) del giocatore sono in concordanza con le regole del gioco, cio' non si puo andare meno di 1 e piu di 6
+void TurnoGiocatore() //controllo se il valore (punti) del giocatore sono in concordanza con le regole del gioco, cio' non si puo andare meno di 1 e piu di 6
+{
+  lcd.print("Turno giocatore");
+while(controllo == 0){ 
 giocatore = 1;
-
 while(digitalRead(8) == HIGH){
   
   if(digitalRead(10) == LOW)
@@ -97,33 +114,37 @@ while(digitalRead(8) == HIGH){
     else if(giocatore  > 6){
       giocatore--;
     }
-    lcd.print("Valore era cambiato a " + giocatore);
+    lcd.print("Giocatore ");
+    lcd.println(giocare);
    // lcd.println(giocatore) //funziona con Serial.;
   }
 }
+Controllo();
+}
 }
 
-void Controllo(){ // mi esegue il controllo rispetto le regole del gioco
-  if(giocatore == 1 && macchina != 6 && macchina != 1 && appoggio != 6 && appoggio != 1){
+void Controllo(){ // eseguo il controllo se le regole del gioco erano rispettate
+  if(giocatore == 1 && macchina != 6 && macchina != 1 && ultimoValore != 6 && ultimoValore != 1){
     controllo = 1;
   }
-  if(giocatore == 2 && macchina != 5 && macchina != 2 && appoggio != 5 && appoggio != 2){
+  if(giocatore == 2 && macchina != 5 && macchina != 2 && ultimoValore != 5 && ultimoValore != 2){
     controllo = 1;
   }
-  if(giocatore == 3 && macchina != 4 && macchina != 3 && appoggio != 4 && appoggio != 3){
+  if(giocatore == 3 && macchina != 4 && macchina != 3 && ultimoValore != 4 && ultimoValore != 3){
     controllo = 1;
   }
-  if(giocatore == 4 && macchina != 3 && macchina != 4 && appoggio != 4 && appoggio != 3){
+  if(giocatore == 4 && macchina != 3 && macchina != 4 && ultimoValore != 4 && ultimoValore != 3){
     controllo = 1;
   }
-  if(giocatore == 5 && macchina != 2 && macchina != 5 && appoggio != 5 && appoggio != 2){
+  if(giocatore == 5 && macchina != 2 && macchina != 5 && ultimoValore != 5 && ultimoValore != 2){
     controllo = 1;
   }
-  if(giocatore == 6 && macchina != 1 && macchina != 6 && appoggio != 6 && appoggio != 1){
+  if(giocatore == 6 && macchina != 1 && macchina != 6 && ultimoValore != 6 && ultimoValore != 1){
     controllo = 1;
   }
 }
-void MacchinaSceglie(){ // macchina che fa un numero random col rispetto alle regole del gioco
+void TurnoMacchina(){ // macchina che fa un numero random col rispetto alle regole del gioco
+  lcd.print("Turno macchina");
   while(controllo == 0){
     macchina = random(1,7);
     Controllo();
@@ -158,23 +179,32 @@ void InserisciMeta() // serve per inserire numero di punti metà //da cambiare
     lcd.print("Punti meta erano cambiati a " + puntiMeta);
    // lcd.println(puntiMeta) //funziona con Serial.;
   }
-}
+ }
+ puntiAppoggio = 1;
 }
 void CCV() // controllo condizioni vincita
 {
   if(puntiTotali == puntiMeta){
-    vincita = 1;
+    appoggio = 1;
   }
   if(puntiTotali > puntiMeta){
-    vincita = 2;
+    appoggio = 2;
   }
 }
 void Vincita(String nome){
-  if(vincita == 1){
-  lcd.print(nome + " ha vinto");
-}
-else if (vincita == 2) {
-  lcd.print(nome + " ha perso");
-}
+  if (appoggio != 0 && appoggio != 3) {
+    if (appoggio == 1) {
+      lcd.print(nome)
+      lcd.println(" ha perso");
+    }
+    else if (appoggio == 2) {
+      lcdl.println(nome)
+      lcd.print(" ha perso");
+    }
+    puntiMeta = 0;
+    puntiTotali = 0;
+    puntiAppoggio = 0;
+    appoggio = 3;
+  }
 }
 
