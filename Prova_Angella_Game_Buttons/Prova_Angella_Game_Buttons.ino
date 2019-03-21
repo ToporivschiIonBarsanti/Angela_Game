@@ -23,7 +23,7 @@ lcd.begin(16,2);
 pinMode(10, INPUT_PULLUP);
 pinMode(9, INPUT_PULLUP);
 pinMode(8, INPUT_PULLUP);
-puntiAppoggio = 0;
+puntiMeta = 0;
 turno = 0;
 vincita = 0;
 appoggio = 0;
@@ -35,11 +35,11 @@ void loop() {
   // put your main code here, to run repeatedly:
   lcd.setCursor(0,1);
 //controllo se puntiMeta non erano ancora inseriti e, in questo caso, gli inserisco
-if(puntiAppoggio == 0)
+if(puntiMeta == 0)
 {
   lcd.print("Inserisci punti metà");
 }
-while(puntiAppogio == 0){
+while(puntiMeta == 0){
   InserisciaMeta();
 }
 //end region puntiMeta
@@ -49,10 +49,14 @@ Vincita("Macchina");
 if(turno == 0){
   lcd.print("è il turno di giocatore");
   while(controllo == 0){
-  
+    TurnoGiocatore();
+    Controllo();
   }
+  AggiungiPunti(giocatore);
+  appoggio = giocatore;
 }
 
+controllo = 0; //serve per il turno di macchina
 CCV();
 Vincita("Giocatore");
 
@@ -69,7 +73,35 @@ if(turno == 2){ giocatore = 0; macchina = 0; turno = 0; }
 // end region gioco
 }
 
+void TurnoGiocatore(){ //controllo se il valore (punti) del giocatore sono in concordanza con le regole del gioco, cio' non si puo andare meno di 1 e piu di 6
+giocatore = 1;
 
+while(digitalRead(8) == HIGH){
+  
+  if(digitalRead(10) == LOW)
+  {
+    giocatore++;
+    lcd.println(giocatore);
+    delay(1000);
+  }
+  if(digitalRead(9) == LOW)
+  {
+    giocatore--;
+    lcd.println(giocatore);
+    delay(1000);
+  }
+  if(giocatore <= 0 || giocatore > 6){
+    if(giocatore <= 0){
+      giocatore++;
+    }
+    else if(giocatore  > 6){
+      giocatore--;
+    }
+    lcd.print("Valore era cambiato a " + giocatore);
+   // lcd.println(giocatore) //funziona con Serial.;
+  }
+}
+}
 
 void Controllo(){ // mi esegue il controllo rispetto le regole del gioco
   if(giocatore == 1 && macchina != 6 && macchina != 1 && appoggio != 6 && appoggio != 1){
@@ -98,9 +130,35 @@ void MacchinaSceglie(){ // macchina che fa un numero random col rispetto alle re
   }
 }
 void AggiungiPunti(int punti){ puntiTotali = puntiTotali + punti; }
+
 void InserisciMeta() // serve per inserire numero di punti metà //da cambiare
 { 
-  
+  puntiMeta = 65; //valore medio tra 100 e 30
+
+  while(digitalRead(8) == HIGH){
+  if(digitalRead(10) == LOW)
+  {
+    puntiMeta++;
+    lcd.println(puntiMeta);
+    delay(1000);
+  }
+  if(digitalRead(9) == LOW)
+  {
+    puntiMeta--;
+    lcd.println(puntiMeta);
+    delay(1000);
+  }
+  if(puntiMeta < 30 || puntiMeta > 100){
+    if(puntiMeta < 30){
+      puntiMeta++;
+    }
+    else if(puntiMeta  > 100){
+      puntiMeta--;
+    }
+    lcd.print("Punti meta erano cambiati a " + puntiMeta);
+   // lcd.println(puntiMeta) //funziona con Serial.;
+  }
+}
 }
 void CCV() // controllo condizioni vincita
 {
