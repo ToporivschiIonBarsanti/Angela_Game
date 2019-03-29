@@ -22,12 +22,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   lcd.setCursor(0, 0);
-  if (puntiTotali != 0) { //mostro punti totali
-    lcd.clear();
-    lcd.print("Punti totali ");
-    lcd.print(puntiTotali);
-    delay(1000);
-  }
+  
   if (endgame == 3) {
     lcd.setCursor(0, 1);
     lcd.print("Clicca OK");
@@ -117,20 +112,21 @@ void TurnoGiocatore() {
     puntiGiocatore = 3;
     lcd.print("Giocatore ");
     lcd.print(puntiGiocatore);
+    ShowPuntiTotali(0);
     while (digitalRead(8) == HIGH) { //finche' la conferma era cliccata mi entra nel ciclo
       if (digitalRead(10) == LOW) {
         puntiGiocatore++;
         lcd.clear();
         lcd.print("Giocatore ");
         lcd.print(puntiGiocatore);
-        delay(500);
+        ShowPuntiTotali(500);
       }
       if (digitalRead(9) == LOW) {
         puntiGiocatore--;
         lcd.clear();
         lcd.print("Giocatore ");
         lcd.print(puntiGiocatore);
-        delay(500);
+        ShowPuntiTotali(500);
       }
       if (puntiGiocatore <= 0 || puntiGiocatore >= 7) { //serve come il controllo aggiuntivo se l'utente esce dallo sccopo del gioco
         if (puntiGiocatore <= 0) {
@@ -138,12 +134,14 @@ void TurnoGiocatore() {
           lcd.clear();
           lcd.print("Giocatore ");
           lcd.print(puntiGiocatore);
+          ShowPuntiTotali(0);
         }
         if (puntiGiocatore > 6) {
           puntiGiocatore--;
           lcd.clear();
           lcd.print("Giocatore ");
           lcd.print(puntiGiocatore);
+          ShowPuntiTotali(0);
         }
       }
     }
@@ -151,7 +149,7 @@ void TurnoGiocatore() {
     if (controllo == false) {
       lcd.clear();
       lcd.print("Valore sbagliato");
-      delay(1000);
+      delay(1500);
       lcd.clear();
     }
   }
@@ -167,11 +165,21 @@ void TurnoMacchina() {
   lcd.clear();
   lcd.print("Macchina ");
   lcd.print(puntiMacchina);
-  delay(1000);
+  ShowPuntiTotali(1500);
   lcd.clear();
 }
 void AggiungiPunti(int punti) {
   puntiTotali += punti;
+}
+void ShowPuntiTotali(int d){//mostro punti totali
+   
+    lcd.setCursor(0,1);
+    lcd.print("P tot ");
+    lcd.print(puntiTotali);
+    lcd.print("/");
+    lcd.print(puntiMeta);
+    lcd.setCursor(0,0);
+    delay(d);
 }
 //endregion giocatore/macchina
 //region punti meta
